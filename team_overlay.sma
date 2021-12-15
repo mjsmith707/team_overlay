@@ -172,7 +172,7 @@ public show_overlay(params[], client_id) {
 }
 
 public weapon_to_string(csw_id, buff[WEAPON_EMPTY_LEN]) {
-	if (csw_id > G_WEAPONS_LEN) {
+	if (csw_id >= G_WEAPONS_LEN) {
 		switch (csw_id) {
 			case 99:
 				copy(buff, WEAPON_EMPTY_LEN, WEAPON_SHIELD_NAME)
