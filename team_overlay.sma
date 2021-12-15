@@ -34,8 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <hamsandwich>
 #include <cstrike>
 
-#define NAME "team overlay"
-#define VERSION "1.0"
+#define NAME "Team Overlay"
+#define VERSION "1.1"
 #define AUTHOR "Raven"
 
 #define OVERLAY_BANNER "Team Status:^n"
@@ -105,77 +105,77 @@ new const g_weapon_names[G_WEAPONS_LEN][] =
 	"P90      ",
 	"         ",
 	"         "
-}
+};
 
-new cvar_overlay_enabled
-new cvar_mp_freezetime
-new g_hud_sync_obj
+new cvar_overlay_enabled;
+new cvar_mp_freezetime;
+new g_hud_sync_obj;
 
 public plugin_init() {
-	register_plugin(NAME, VERSION, AUTHOR)
+	register_plugin(NAME, VERSION, AUTHOR);
 	
-	RegisterHam(Ham_Spawn, "player", "on_roundstart_callback", 1)
+	RegisterHam(Ham_Spawn, "player", "on_roundstart_callback", 1);
 	
-	cvar_overlay_enabled = create_cvar("tmo_enable", "1", FCVAR_NONE, "Enable the team overlay")
+	cvar_overlay_enabled = create_cvar("tmo_enable", "1", FCVAR_NONE, "Enable the team overlay");
 	
-	cvar_mp_freezetime = get_cvar_pointer("mp_freezetime")
+	cvar_mp_freezetime = get_cvar_pointer("mp_freezetime");
 	
-	g_hud_sync_obj = CreateHudSyncObj()
+	g_hud_sync_obj = CreateHudSyncObj();
 }
 
 public on_roundstart_callback(client_id) {	
 	if (get_pcvar_num(cvar_overlay_enabled)) {
-		new taskid = TASKID_OFFSET + client_id
-		remove_task(taskid)
-		new params[1]
-		params[0] = 0
-		new repeat = floatround ( float(get_pcvar_num(cvar_mp_freezetime)) / OVERLAY_REFRESH )
-		set_task(OVERLAY_REFRESH, "show_overlay", taskid, params, 1, "a", repeat)
+		new taskid = TASKID_OFFSET + client_id;
+		remove_task(taskid);
+		new params[1];
+		params[0] = 0;
+		new repeat = floatround ( float(get_pcvar_num(cvar_mp_freezetime)) / OVERLAY_REFRESH );
+		set_task(OVERLAY_REFRESH, "show_overlay", taskid, params, 1, "a", repeat);
 	}
 }
 
 public show_overlay(params[], client_id) {
 	if (!is_user_alive(client_id)) {
-		return
+		return;
 	}
 	
-	static msg[MSG_MAXLEN]
-	static name[NAME_MAXLEN]
+	static msg[MSG_MAXLEN];
+	static name[NAME_MAXLEN];
 
-	new CsTeams:client_team = cs_get_user_team(client_id)	
-	new g_max_players = get_maxplayers()
-	new msg_len
-	new money
-	static weapon[WEAPON_EMPTY_LEN]
-	static armor[ARMOR_NONE_LEN]
-	new CsArmorType:armor_t
-	static defuser[DEFUSER_NONE_LEN]
+	new CsTeams:client_team = cs_get_user_team(client_id);
+	new g_max_players = get_maxplayers();
+	new msg_len;
+	new money;
+	static weapon[WEAPON_EMPTY_LEN];
+	static armor[ARMOR_NONE_LEN];
+	new CsArmorType:armor_t;
+	static defuser[DEFUSER_NONE_LEN];
 	
-	msg_len = formatex(msg, strlen(OVERLAY_BANNER), OVERLAY_BANNER)
+	msg_len = formatex(msg, strlen(OVERLAY_BANNER), OVERLAY_BANNER);
 	
 	for (new id=1; id<=g_max_players; id++) {
 		if (is_user_connected(id) && (cs_get_user_team(id) == client_team)) {
-			get_user_name(id, name, NAME_MAXLEN)
-			money = cs_get_user_money(id)
-			weapon_to_string(cs_get_user_weapon(id), weapon)
-			cs_get_user_armor(id, armor_t)
-			armor_to_string(armor_t, armor)
-			defuser_to_string(cs_get_user_defuse(id), defuser)
+			get_user_name(id, name, NAME_MAXLEN);
+			money = cs_get_user_money(id);
+			weapon_to_string(cs_get_user_weapon(id), weapon);
+			cs_get_user_armor(id, armor_t);
+			armor_to_string(armor_t, armor);
+			defuser_to_string(cs_get_user_defuse(id), defuser);
 			
 			// name: money | weapon | armor | kit
-			msg_len += format(msg[msg_len], MSG_MAXLEN - msg_len, "%-15s: $%-5d | %s | %s | %s^n", name, money, weapon, armor, defuser)
+			msg_len += format(msg[msg_len], MSG_MAXLEN - msg_len, "%-15s: $%-5d | %s | %s | %s^n", name, money, weapon, armor, defuser);
 		}
 	}
 
-	set_hudmessage(HUD_R, HUD_G, HUD_B, HUD_X, HUD_Y, HUD_EFFECT, HUD_FXTIME, HUD_HOLDTIME, HUD_FADEINTIME, HUD_FADEOUTTIME, HUD_CHANNEL)
-	ShowSyncHudMsg(client_id, g_hud_sync_obj, msg)
+	set_hudmessage(HUD_R, HUD_G, HUD_B, HUD_X, HUD_Y, HUD_EFFECT, HUD_FXTIME, HUD_HOLDTIME, HUD_FADEINTIME, HUD_FADEOUTTIME, HUD_CHANNEL);
+	ShowSyncHudMsg(client_id, g_hud_sync_obj, msg);
 }
 
 public weapon_to_string(csw_id, buff[WEAPON_EMPTY_LEN]) {
 	if (csw_id >= G_WEAPONS_LEN) {
 		switch (csw_id) {
 			case 99:
-				copy(buff, WEAPON_EMPTY_LEN, WEAPON_SHIELD_NAME)
+				copy(buff, WEAPON_EMPTY_LEN, WEAPON_SHIELD_NAME);
 			default:
 				copy(buff, WEAPON_EMPTY_LEN, WEAPON_EMPTY);
 		}
@@ -187,21 +187,21 @@ public weapon_to_string(csw_id, buff[WEAPON_EMPTY_LEN]) {
 public armor_to_string(CsArmorType:armor_type, buff[ARMOR_NONE_LEN]) {
 	switch (armor_type) {
 		case CS_ARMOR_NONE:
-			copy(buff, ARMOR_NONE_LEN, ARMOR_NONE_NAME)
+			copy(buff, ARMOR_NONE_LEN, ARMOR_NONE_NAME);
 		case CS_ARMOR_KEVLAR:
-			copy(buff, ARMOR_NONE_LEN, ARMOR_VEST_NAME)
+			copy(buff, ARMOR_NONE_LEN, ARMOR_VEST_NAME);
 		case CS_ARMOR_VESTHELM:
-			copy(buff, ARMOR_NONE_LEN, ARMOR_VESTHELM_NAME)
+			copy(buff, ARMOR_NONE_LEN, ARMOR_VESTHELM_NAME);
 		default:
-			copy(buff, ARMOR_NONE_LEN, ARMOR_NONE_NAME)
+			copy(buff, ARMOR_NONE_LEN, ARMOR_NONE_NAME);
 	}
 }
 
 public defuser_to_string(defuser_id, buff[DEFUSER_NONE_LEN]) {
 	switch (defuser_id) {
 		case 0:
-			copy(buff, DEFUSER_NONE_LEN, DEFUSER_NONE_NAME)
+			copy(buff, DEFUSER_NONE_LEN, DEFUSER_NONE_NAME);
 		case 1:
-			copy(buff, DEFUSER_NONE_LEN, DEFUSER_ACTIVE_NAME)
+			copy(buff, DEFUSER_NONE_LEN, DEFUSER_ACTIVE_NAME);
 	}
 }
