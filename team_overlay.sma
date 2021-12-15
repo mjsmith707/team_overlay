@@ -30,6 +30,9 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#pragma semicolon 1
+#pragma ctrlchar '\'
+
 #include <amxmodx>
 #include <hamsandwich>
 #include <cstrike>
@@ -38,7 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define VERSION "1.1"
 #define AUTHOR "Raven"
 
-#define OVERLAY_BANNER "Team Status:^n"
+#define OVERLAY_BANNER "Team Status:\n"
 #define MSG_MAXLEN 1024
 #define NAME_MAXLEN 16
 
@@ -163,7 +166,7 @@ public show_overlay(params[], client_id) {
 			defuser_to_string(cs_get_user_defuse(id), defuser);
 			
 			// name: money | weapon | armor | kit
-			msg_len += format(msg[msg_len], MSG_MAXLEN - msg_len, "%-15s: $%-5d | %s | %s | %s^n", name, money, weapon, armor, defuser);
+			msg_len += format(msg[msg_len], MSG_MAXLEN - msg_len, "%-15s: $%-5d | %s | %s | %s\n", name, money, weapon, armor, defuser);
 		}
 	}
 
